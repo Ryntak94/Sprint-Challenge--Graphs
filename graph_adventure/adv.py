@@ -21,8 +21,71 @@ player = Player("Name", world.startingRoom)
 
 
 # FILL THIS IN
-traversalPath = ['n', 's']
+traversalPath = []
 
+graph = {}
+visited = []
+exits = []
+room = ""
+
+def route():
+    routeList = []
+    direction = ""
+    i = 0
+
+    while len(visited)<500:
+        if player.currentRoom.id not in visited:
+            visited.append(player.currentRoom.id)
+        room = player.currentRoom.id
+        if graph.get(player.currentRoom.id) == None:
+            exits = player.currentRoom.getExits()
+        else:
+            exits = graph[player.currentRoom.id]
+        graph[player.currentRoom.id] = exits
+        if direction:
+            if direction == "n":
+                if "s" in graph[room]:
+                    graph[room].remove("s")
+                routeList.append("s")
+
+            if direction == "s":
+                if "n" in graph[room]:
+                    graph[room].remove("n")
+                routeList.append("n")
+
+            if direction == "e":
+                if "w" in graph[room]:
+                    graph[room].remove("w")
+                routeList.append("w")
+
+            if direction == "w":
+                if "e" in graph[room]:
+                    graph[room].remove("e")
+                routeList.append("e")
+
+        if graph[room]:
+            if graph[room][0] == "n":
+                direction = "n"
+            elif graph[room][0] == "e":
+                direction = "e"
+            elif graph[room][0] == "s":
+                direction = "s"
+            elif graph[room][0] == "w":
+                direction = "w"
+            
+            graph[room].remove(direction)
+            traversalPath.append(direction)
+            player.travel(direction)
+        else:
+            path = routeList.pop()
+            traversalPath.append(path)
+            player.travel(path)
+            direction = None
+        i += 1
+        print(i)
+
+
+route()
 
 # TRAVERSAL TEST
 visited_rooms = set()
